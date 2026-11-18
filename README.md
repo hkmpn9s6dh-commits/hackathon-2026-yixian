@@ -67,8 +67,8 @@ submission/              作品简介、创作说明、推荐表、分镜表、�
 | --- | --- | --- |
 | A 共识 | ✅ | `SPEC.md`、`docs/01-STORY.md`（十条可引用事实）、`docs/02-STYLE.md` |
 | B 流程 | ✅ | 先写断言再出片：`scripts/verify.py` 47 条，其中"开场线必须在长"当场否掉了原来 13 秒的黑场开场 |
-| C 能用 | ✅ | `proof/verify.log`：本机全绿 + 全新 clone 全绿 |
-| D 第一眼 | 见 `docs/07-GATE-D.md` | 六帧盲读 + 尺子盲排 |
+| C 能用 | ✅ | `proof/verify.log` 本机 47/47；`proof/clone-verify.log` 全新 clone 从零重建同一套 47 条全绿（clone 里抓出三条本机看不到的错，见 `docs/04-PROOF.md`） |
+| D 第一眼 | ✅ 过线（下限判断） | `docs/07-GATE-D.md`：首届无往届尺子 → 六帧盲读，两位不同家族评委（GLM-5.3F / Kimi-K3.1-Pro）都读出"漆线雕"与同一条叙事线；第一轮因母单标题泄底已作废重做 |
 
 ## 原则
 

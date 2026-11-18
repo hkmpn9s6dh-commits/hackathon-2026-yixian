@@ -1,0 +1,111 @@
+# 全新 clone 从零构建的完整日志
+# 来源：git clone https://github.com/hkmpn9s6dh-commits/hackathon-2026-yixian.git（depth 1，无缓存、无本机产物）
+# 命令：bash verify.sh
+# 结果：47 条断言 47 过 / 0 败；成片 193.5 MB / 179.50 s / 8846 kbps
+# 机器：Windows / Python 3.8.8 / ffmpeg（本机）
+
+== 0. 依赖 ==
+依赖齐
+== 1. 图版与字体 ==
+图版 18 张、字体 2 套
+== 2. 分镜表与 story.py 是否一致 ==
+  PASS  分镜表与 story.py 一致
+== 3. 成片 ==
+   out/yixian.mp4 不存在，现在从头构建（约 40 分钟，4 进程并行）
+《一线》总时长 179.5s / 4308 帧 / 1920×1080@24
+[1/5] 声音（edge-tts 旁白 + numpy 合成 + 响度对齐）
+  $ C:\Users\张一\AppData\Local\Programs\Python\Python38\python.exe <clone>\scripts\audio.py
+旁白…
+环境音…
+音乐…
+  I=-22.2 → gain 2.000
+  I=-20.6 → gain 1.698
+  I=-20.6 → gain 1.698
+配音超槽: 无
+最短余量: 1.2000000000000002
+wav: <clone>\build\audio_raw.wav 32.9 MB  I=-20.6 LUFS
+[2/5] 逐帧渲染 4308 帧 / 4 段并行
+  段 0 完成（0–1078 帧）698s
+  段 1 完成（1078–2156 帧）698s
+  段 2 完成（2156–3234 帧）699s
+  段 3 完成（3234–4308 帧）778s
+  拼接（-c copy）
+  $ ffmpeg -y -loglevel error -f concat -safe 0 -i <clone>\build\list.txt -c copy C:\Users\张一\WorkBudd
+[3/5] 混音
+  $ ffmpeg -y -loglevel error -i <clone>\build\master.mp4 -i C:\Users\张一\WorkBuddy\spaces\2026_11_12_2
+[4/5] 压到交件规格（CRF 21，上限 9 Mbps，faststart）
+  $ ffmpeg -y -loglevel error -i <clone>\build\muxed.mp4 -c:v libx264 -preset slow -crf 21 -maxrate 9M
+[5/5] 核对
+  <clone>\out\yixian.mp4
+  1920×1080 h264 193.5 MB 179.50s 8846 kbps
+完成。
+== 4. 闸 C 逐条 ==
+
+[成片]
+  PASS  AC-0 成片存在   <clone>\out\yixian.mp4
+  PASS  AC-1 时长 60–240s（赛规 1–4 分钟）   179.50s
+  PASS  AC-1b 时长与 story.py 一致（±0.15s）   179.50s / 脚本 179.50s
+  PASS  AC-2 1920×1080   1920×1080
+  PASS  AC-3 H.264 / yuv420p   h264 / yuv420p
+  PASS  AC-4 文件 ≤ 400MB   193.5 MB
+  PASS  AC-5 有音轨   1 条
+  PASS  AC-5b AAC / 48kHz / 立体声   aac 48000Hz 2ch
+  PASS  AC-5c 响度 −22…−12 LUFS   -20.6 LUFS
+  PASS  AC-5d 真峰 ≤ −1.0 dBFS   -2.9 dBFS
+  PASS  AC-5e 响度范围 LRA 4–24 LU   12.0 LU
+
+[时间轴 / 字幕]
+  PASS  AC-6a 镜头起点连续
+  PASS  AC-6b 时长和 = 全片 − 片名卡   173.50s / 173.50s
+  PASS  AC-6c 镜头数 ≥ 16   20 个
+  PASS  AC-7a 字幕条数 ≥ 15   19 条
+  PASS  AC-7b 字幕不重叠   []
+  PASS  AC-7c 每条停留 ≥ 1.2s   []
+  PASS  AC-7d 全部落在成片时间轴内   []
+  PASS  AC-7e 单行 ≤ 34 字（1920 宽不折行）   []
+  PASS  AC-7f 配音不超槽 +0.4s   []
+  PASS  AC-7g 配音条数 = 有字幕镜头数   19 / 19
+  PASS  AC-7h 每条配音余量 ≥ 0.6s   []
+
+[字幕真的上屏]
+  PASS  AC-8b 第 3 镜字幕上屏（舂上几个小时，泥…）   高亮像素 4.18%
+  PASS  AC-8b 第 10 镜字幕上屏（一九七二年，蔡水…）   高亮像素 8.46%
+  PASS  AC-8b 第 18 镜字幕上屏（我藏头，收尾。不…）   高亮像素 10.46%
+  PASS  AC-8c 抽 3 镜字幕全部可见   3/3
+
+[画面：第一眼与图版]
+  PASS  AC-9b 开场线在长（0.5→1→2→3s 暖亮像素严格递增）   [439, 1510, 6088, 11970]
+  PASS  AC-9c 第 1.0s 已有看得见的线头（暖亮像素 ≥ 500）   1510 px
+  PASS  AC-9d 第 1.0s 有亮点（max R ≥ 200）   252
+  PASS  AC-9e 第 1.0s 画面非全黑（p99 ≥ 25）   63
+  PASS  AC-10a 每镜中点帧 p99 ≥ 45（无废帧）   []
+  PASS  AC-10b 线转场里金线真的在场（抽 6 处）   []
+  PASS  AC-10c 片名卡有文字（亮像素 ≥ 0.5%）   1.97%
+  PASS  AC-10d 每个镜头都有图版文件   []
+  PASS  AC-10e 没有闲图版（18 张全用到）   []
+  PASS  AC-10f 图版张数 = 18   18
+
+[工具水印避让]
+  PASS  AC-11a SAFE_BOTTOM ≤ 水印上沿 0.940   0.905
+  PASS  AC-11b 所有取样窗下边界 ≤ SAFE_BOTTOM   []
+  PASS  AC-11c 成片右下角无高亮水印残留   0.00%
+
+[声音]
+  PASS  AC-12b 无 > 3s 的静音段   最长 1.25s
+  PASS  AC-12c 有对白级动态（p95 − p20 ≥ 8 dB）   12.5 dB
+  PASS  AC-12d 每条旁白处都有声音（≥ −34 dBFS）   []
+
+[字体]
+  PASS  AC-13a 字体存在 NotoSerifSC-VF.ttf
+  PASS  AC-13b NotoSerifSC-VF.ttf 缺字 = 0（142 字）
+  PASS  AC-13a 字体存在 MaShanZheng.ttf
+  PASS  AC-13b MaShanZheng.ttf 缺字 = 0（2 字）
+  PASS  AC-13c 字体许可随包
+
+合计：47 过 / 0 败
+== 5. 证据帧 ==
+证据帧 20 张 → <clone>\proof\frames
+联系表 → <clone>\proof\contact-sheet.jpg
+转场连拍（第 1 镜 sweep）→ <clone>\proof\transition-strip.jpg
+
+全部通过。
