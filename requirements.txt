@@ -1,0 +1,8 @@
+# 运行时依赖（Python 3.10+）
+numpy>=1.24
+Pillow>=10.0
+fonttools>=4.40
+edge-tts>=6.1
+
+# 外部命令
+#   ffmpeg / ffprobe   —— 编码、混音、抽帧、ebur128 响度

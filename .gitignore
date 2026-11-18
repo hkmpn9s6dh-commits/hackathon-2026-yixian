@@ -1,0 +1,15 @@
+# 中间产物
+build/*
+!build/vo/
+!build/vo/*.mp3
+!build/vo/*.json
+
+# 成片（用 Release 分发，不进仓库）
+out/
+
+# 临时
+__pycache__/
+*.pyc
+.tmp/
+*.part.mp4
+*.log.mbtree
