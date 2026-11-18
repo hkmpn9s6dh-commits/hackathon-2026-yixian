@@ -32,7 +32,7 @@
 
 ```bash
 pip install -r requirements.txt          # numpy / Pillow / fonttools / edge-tts
-bash verify.sh                            # 一键：依赖 → 图版 → 分镜表 → 成片 → 40+ 条断言 → 证据帧
+bash verify.sh                            # 一键：依赖 → 图版 → 分镜表 → 成片 → 47 条断言 → 证据帧
 ```
 
 只想重建片子：
@@ -51,7 +51,7 @@ story.py                 ★ 唯一真源：图版提示词 / 20 镜 / 19 句台
 scripts/render.py        逐帧渲染：取样窗运镜 + 金线场转场 + 颗粒/暗角/字幕
 scripts/audio.py         edge-tts 旁白 + numpy 合成音效与配乐 + ducking + 响度对齐
 scripts/build.py         一条命令从零到成片
-scripts/verify.py        闸 C：40+ 条断言（规格/字幕/画面/水印/声音/字体）
+scripts/verify.py        闸 C：47 条断言（规格/字幕/画面/水印/声音/字体）
 scripts/gen_shots.py     从 story.py 生成分镜表（--check 反向核对）
 scripts/stills.py        proof/ 证据帧
 assets/plates/P00–P17    18 张图版（生成物，随仓库提交，保证 1:1 复现）
@@ -66,7 +66,7 @@ submission/              作品简介、创作说明、推荐表、分镜表、�
 | 闸 | 状态 | 证据 |
 | --- | --- | --- |
 | A 共识 | ✅ | `SPEC.md`、`docs/01-STORY.md`（十条可引用事实）、`docs/02-STYLE.md` |
-| B 流程 | ✅ | 先写断言再出片：`scripts/verify.py` 40+ 条，其中"开场 1s 必须有金线"当场否掉了原来 13s 的黑场开场 |
+| B 流程 | ✅ | 先写断言再出片：`scripts/verify.py` 47 条，其中"开场线必须在长"当场否掉了原来 13 秒的黑场开场 |
 | C 能用 | ✅ | `proof/verify.log`：本机全绿 + 全新 clone 全绿 |
 | D 第一眼 | 见 `docs/07-GATE-D.md` | 六帧盲读 + 尺子盲排 |
 

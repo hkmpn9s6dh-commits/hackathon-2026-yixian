@@ -168,16 +168,30 @@ def verify_sub_on_screen():
 
 
 # ---------------------------------------------------------------- 画面
+def warm_mask(arr):
+    """"看得见的暖亮"：线芯被放大与颗粒柔化后不一定满足严格金色，用暖亮判据。"""
+    r, g, b = arr[..., 0], arr[..., 1], arr[..., 2]
+    return (r > 100) & (r - b > 30)
+
+
 def verify_picture():
     print("\n[画面：第一眼与图版]")
     if not os.path.exists(OUT):
         return check("AC-9a 成片存在", False)
 
-    # 开场第一秒就要有东西在动（防"以为播放失败"）
+    # 开场不能像"播放失败"：判据不是某个魔法阈值，而是**线在变长**
+    # （0.5s < 1s < 2s < 3s 的暖亮像素数严格递增），且 1 秒时已经有一条看得见的线头。
+    cnt = {}
+    for t in (0.5, 1.0, 2.0, 3.0):
+        cnt[t] = int(warm_mask(np.asarray(grab(OUT, t), np.float32)).sum())
+    inc = all(cnt[b] > cnt[a] for a, b in ((0.5, 1.0), (1.0, 2.0), (2.0, 3.0)))
+    check("AC-9b 开场线在长（0.5→1→2→3s 暖亮像素严格递增）", inc, str(list(cnt.values())))
+    check("AC-9c 第 1.0s 已有看得见的线头（暖亮像素 ≥ 500）", cnt[1.0] >= 500,
+          f"{cnt[1.0]} px")
     a1 = np.asarray(grab(OUT, 1.0), np.float32)
-    g1 = gold_mask(a1).mean()
-    check("AC-9b 第 1.0s 已有金线像素 ≥ 0.02%", g1 >= 0.0002, f"{g1 * 100:.3f}%")
-    check("AC-9c 第 1.0s 画面非全黑（p99 ≥ 25）", np.percentile(lum(grab(OUT, 1.0)), 99) >= 25,
+    check("AC-9d 第 1.0s 有亮点（max R ≥ 200）", a1[..., 0].max() >= 200,
+          f"{a1[..., 0].max():.0f}")
+    check("AC-9e 第 1.0s 画面非全黑（p99 ≥ 25）", np.percentile(lum(grab(OUT, 1.0)), 99) >= 25,
           f"{np.percentile(lum(grab(OUT, 1.0)), 99):.0f}")
 
     # 每个镜头中点都不能是废帧

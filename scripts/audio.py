@@ -315,7 +315,7 @@ def main():
     mix[:int(0.5 * SR)] *= np.linspace(0, 1, int(0.5 * SR))
 
     peak = np.abs(mix).max() + 1e-9
-    mix = mix / peak * 0.62
+    mix = mix / peak * 0.58
     out = os.path.join(BUILD, "audio_raw.wav")
     write_wav(out, mix)
 
@@ -329,8 +329,8 @@ def main():
         g = min(max(g, 0.5), 2.0)
         mix = mix * g
         pk = np.abs(mix).max()
-        if pk > 0.89:            # 保真峰 ≤ -1.0 dBFS
-            mix = mix * (0.89 / pk)
+        if pk > 0.82:            # 留 0.8 dB 余量：AAC 编码后真峰会再抬 0.4 dB 左右
+            mix = mix * (0.82 / pk)
         write_wav(out, mix)
         print(f"  I={I:.1f} → gain {g:.3f}", flush=True)
 

@@ -20,8 +20,11 @@ FONT = os.path.join(ROOT, "assets", "fonts", "NotoSerifSC-VF.ttf")
 
 
 def grab(t, path):
+    """存 JPG（同样清晰，体积只有 PNG 的十分之一，仓库别被证据帧撑爆）。"""
+    path = os.path.splitext(path)[0] + ".jpg"
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", f"{t:.3f}", "-i", OUT,
-                    "-frames:v", "1", path], check=True)
+                    "-frames:v", "1", "-q:v", "2", path], check=True)
+    return path
 
 
 def main():
@@ -39,8 +42,7 @@ def main():
     tiles = []
     for i, s in enumerate(S.SHOTS):
         t = starts[i] + s["dur"] * 0.55
-        p = os.path.join(FRAMES, f"shot{i:02d}.png")
-        grab(t, p)
+        p = grab(t, os.path.join(FRAMES, f"shot{i:02d}.png"))
         tiles.append((t, p))
     # 2) 片名卡
     grab(total - 1.2, os.path.join(FRAMES, "endcard.png"))
@@ -66,8 +68,7 @@ def main():
     ds = ImageDraw.Draw(strip)
     for k in range(6):
         t = starts[tr_i] + tr["dur"] * (k / 5) * 0.92
-        p = os.path.join(FRAMES, f"tr{tr_i}_{k}.png")
-        grab(t, p)
+        p = grab(t, os.path.join(FRAMES, f"tr{tr_i}_{k}.png"))
         im = Image.open(p).convert("RGB").resize((cw, ch), Image.LANCZOS)
         x, y = (k % 3) * cw, (k // 3) * ch
         strip.paste(im, (x, y))
