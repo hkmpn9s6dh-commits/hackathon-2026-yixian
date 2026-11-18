@@ -188,7 +188,9 @@ def main():
         for i, s in enumerate(S.SHOTS) if (x := s.get("sub")))
 
     total = sum(s["dur"] for s in S.SHOTS) + S.ENDCARD
-    mm, ss = divmod(int(round(total)), 60)
+    # 向下取整到秒：179.5 s 应显示 2 分 59 秒，不能四舍五入成 3 分 00 秒
+    mm = int(total // 60)
+    ss = int(total - mm * 60)
     meta = (f"{mm} 分 {ss:02d} 秒 · 1920×1080 · 24fps · 20 镜 · 18 张 AI 图版 · "
             "程序化运镜与合成")
 
