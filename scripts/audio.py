@@ -329,8 +329,11 @@ def main():
         g = min(max(g, 0.5), 2.0)
         mix = mix * g
         pk = np.abs(mix).max()
-        if pk > 0.82:            # 留 0.8 dB 余量：AAC 编码后真峰会再抬 0.4 dB 左右
-            mix = mix * (0.82 / pk)
+        # 0.70 ≈ −3.1 dBFS。实测这条 AAC（192k）会把真峰抬高 1.1 dB，
+        # 所以要给到 −3.1 才能保证交付文件的真峰 ≤ −1.0 dBFS（AC-5d）。
+        # 原来的 0.82 是按"抬高 0.4 dB"估的，编出来实测 −0.6，AC-5d 挂。
+        if pk > 0.70:
+            mix = mix * (0.70 / pk)
         write_wav(out, mix)
         print(f"  I={I:.1f} → gain {g:.3f}", flush=True)
 

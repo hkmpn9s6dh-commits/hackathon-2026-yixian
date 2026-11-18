@@ -83,11 +83,14 @@ def mux(master):
 
 
 def encode(muxed):
-    print("[4/5] 压到交件规格（CRF 21，faststart）", flush=True)
+    print("[4/5] 压到交件规格（CRF 21，上限 9 Mbps，faststart）", flush=True)
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     tmp = OUT + ".part.mp4"
+    # 上限 9M 是硬要求：这部片子颗粒重，纯 CRF 21 会冲到 19 Mbps / 430 MB，
+    # 既过不了 AC-4（≤400 MB），也不适合邮箱/网盘交件。封顶后约 200 MB / 8.8 Mbps。
     run(["ffmpeg", "-y", "-loglevel", "error", "-i", muxed,
          "-c:v", "libx264", "-preset", "slow", "-crf", "21",
+         "-maxrate", "9M", "-bufsize", "18M",
          "-pix_fmt", "yuv420p", "-profile:v", "high", "-level", "4.1",
          "-x264-params", "aq-mode=3:deblock=-1,-1",
          "-c:a", "copy", "-movflags", "+faststart", tmp])

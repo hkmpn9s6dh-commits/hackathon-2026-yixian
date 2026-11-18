@@ -54,9 +54,12 @@ def main():
          "-shortest", muxed])
 
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
+    # 1080p 直接调 build.encode()——同一条命令，不许两处各写一套参数
+    # （上一版就是因为这里带 -x264-params、build.py 没带，clone 出来的片子 430 MB，AC-4 挂）
+    sys.path.insert(0, HERE)
+    import build as B
+    B.encode(muxed)
     for path, vf, crf, extra in (
-        (OUT, None, "21", ["-profile:v", "high", "-level", "4.1",
-                           "-x264-params", "aq-mode=3:deblock=-1,-1"]),
         (OUT720, "scale=1280:720", "23", ["-profile:v", "high", "-level", "4.0"]),
     ):
         print(f"压制 {os.path.basename(path)}…", flush=True)
