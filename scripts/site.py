@@ -149,28 +149,38 @@ def grab(t, w=1600):
 
 
 def poster():
-    """封面：P15 的盘 + 片名，1920×1080。"""
+    """封面：P15 的盘 + 片名。字压在图上的地方先压一层柔和的暗带，保证字读得清。"""
+    import numpy as np
+
     im = Image.open(os.path.join(ROOT, "assets", "plates", "P15.png")).convert("RGB")
     k = 1920 / im.width
     im = im.crop((0, 0, im.width, int(1080 / k))).resize((1920, 1080), Image.LANCZOS)
-    im = im.point(lambda v: int(v * 0.78))
+    arr = np.asarray(im, np.float32) * 0.72
+
+    # 文字带：y 240–820，上下软边；带内把画面压到 32%，带外 72%
+    yy = np.arange(1080, dtype=np.float32)[:, None]
+    a = np.clip(np.minimum((yy - 200) / 180.0, (880 - yy) / 180.0), 0, 1)
+    arr = arr * (1 - 0.56 * a)[..., None]
+    # 径向暗角
+    yy2, xx2 = np.mgrid[0:1080, 0:1920].astype(np.float32)
+    r = np.sqrt(((xx2 - 960) / 1150) ** 2 + ((yy2 - 540) / 700) ** 2)
+    arr = arr * np.clip(1.08 - 0.42 * np.clip(r, 0, 1.6) ** 2.0, 0.35, 1.0)[..., None]
+    im = Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8))
     d = ImageDraw.Draw(im)
+
     f1 = ImageFont.truetype(FONT_BRUSH, 260)
-    f2 = ImageFont.truetype(FONT_SERIF, 54)
+    f2 = ImageFont.truetype(FONT_SERIF, 52)
     f3 = ImageFont.truetype(FONT_SERIF, 30)
 
-    bb = d.textbbox((0, 0), S.TITLE, font=f1)
-    x = (1920 - (bb[2] - bb[0])) // 2 - bb[0]
-    d.text((x + 6, 306), S.TITLE, font=f1, fill=(0, 0, 0))
-    d.text((x, 300), S.TITLE, font=f1, fill=(242, 228, 198))
+    def center(txt, font, y, fill, tracking=0):
+        bb = d.textbbox((0, 0), txt, font=font)
+        x = (1920 - (bb[2] - bb[0])) // 2 - bb[0]
+        d.text((x, y), txt, font=font, fill=fill)
 
-    bb = d.textbbox((0, 0), S.SUBTITLE, font=f2)
-    d.text(((1920 - (bb[2] - bb[0])) // 2 - bb[0], 660), S.SUBTITLE, font=f2,
-           fill=(212, 198, 172))
-
-    bb = d.textbbox((0, 0), "AIGC 创意短片", font=f3)
-    d.text(((1920 - (bb[2] - bb[0])) // 2 - bb[0], 758), "AIGC 创意短片", font=f3,
-           fill=(190, 176, 152))
+    center(S.TITLE, f1, 300, (0, 0, 0))
+    center(S.TITLE, f1, 294, (243, 230, 201))
+    center(S.SUBTITLE, f2, 636, (214, 198, 170))
+    center("AIGC 创意短片 · 国家级非遗 Ⅷ-55", f3, 730, (196, 182, 160))
     im.save(os.path.join(IMG, "cover.jpg"), quality=92)
     im.save(os.path.join(ROOT, "submission", "封面.png"))
     return "cover.jpg"
