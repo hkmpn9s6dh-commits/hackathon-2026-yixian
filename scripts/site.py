@@ -40,8 +40,9 @@ CSS = """
        color:var(--gold-hi); }
   .sub { color:var(--gold); letter-spacing:.22em; font-size:14px; }
   .meta { color:var(--dim); font-size:13px; letter-spacing:.08em; margin-top:14px; }
-  .cover { margin:36px 0 8px; }
-  .cover img { width:100%; display:block; border:1px solid #1e1a15; }
+  .player { margin:36px 0 8px; }
+  .player video { width:100%; display:block; border:1px solid #1e1a15; background:#000; }
+  .hint { color:var(--dim); font-size:13px; padding-top:10px; letter-spacing:.04em; }
   .lead { max-width:780px; margin:40px auto 8px; color:#e6ddcd; }
   .lead em { color:var(--gold-hi); font-style:normal; }
   section { padding:56px 0 8px; border-top:1px solid #1b1712; }
@@ -80,7 +81,13 @@ PAGE = """<!DOCTYPE html>
     <div class="meta">@@META@@</div>
   </header>
 
-  <div class="cover"><img src="img/@@COVER@@" alt="《@@TITLE@@》封面"></div>
+  <div class="player">
+    <video controls playsinline preload="metadata" poster="img/@@COVER@@">
+      <source src="@@VIDEO@@" type="video/mp4">
+      你的浏览器不支持 video 标签；<a href="@@VIDEO@@">点这里下载</a>。
+    </video>
+    <div class="hint">720p 预览 · 全长 @@DUR@@ · 原片（1080p，9 Mbps）见 <a href="@@REL@@">Release</a></div>
+  </div>
 
   <p class="lead">漆线雕是把漆泥搓成线、再把线盘成浮雕的手艺。这片子不讲大师生平，也不做工艺全景，
   只让这根线自己开口：<em>「我叫线。不是画上去的，是站上去的。」</em>
@@ -194,7 +201,13 @@ def main():
     meta = (f"{mm} 分 {ss:02d} 秒 · 1920×1080 · 24fps · 20 镜 · 18 张 AI 图版 · "
             "程序化运镜与合成")
 
+    REL = ("https://github.com/hkmpn9s6dh-commits/hackathon-2026-yixian/releases/tag/v1")
+    VIDEO = ("https://github.com/hkmpn9s6dh-commits/hackathon-2026-yixian/releases/"
+             "download/v1/yixian-720p.mp4")
     page = (PAGE.replace("@@CSS@@", CSS)
+                .replace("@@VIDEO@@", VIDEO)
+                .replace("@@REL@@", REL)
+                .replace("@@DUR@@", f"{mm}:{ss:02d}")
                 .replace("@@TITLE@@", html.escape(S.TITLE))
                 .replace("@@SUB@@", html.escape(S.SUBTITLE))
                 .replace("@@META@@", meta)
